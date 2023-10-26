@@ -79,9 +79,10 @@ public class Main {
         List<String> fruits = new ArrayList<String>(
                 Arrays.asList("apple", "banana", "orange", "grape", "banana"));
         Set<String> newSet = fruits.stream()
-                .collect(Collectors.toSet());
-//        System.out.println(newSet);
-        newSet.forEach(item -> System.out.println(item));
+                .collect(Collectors.toCollection(
+                        HashSet::new
+                ));
+        newSet.forEach(System.out::println);
     }
 
     static void streamToCollection() {
@@ -89,16 +90,15 @@ public class Main {
                 Arrays.asList("apple", "banana", "orange", "grape", "banana"));
         List<String> newList = fruits.stream()
                 .collect(Collectors.toCollection(
-                        LinkedList::new
+                        Arrays::asList
                 ));
-        newList.forEach(item -> System.out.println(item));
+        newList.forEach(System.out::println);
     }
 
     static void streamToMap() {
         List<String> fruits = new ArrayList<String>(
                 Arrays.asList("apple", "banana", "orange", "grape", "banana"));
-        Map<String, Integer> newMap = fruits.stream()
-                .collect(Collectors.toSet()).stream()
+        Map<String, Integer> newMap = new HashSet<>(fruits).stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
                         String::length
@@ -110,9 +110,9 @@ public class Main {
         List<String> fruits = new ArrayList<String>(
                 Arrays.asList("apple", "banana", "orange", "grape", "banana"));
         List<String> newList = fruits.stream()
-                .map(item -> item.toUpperCase())
-                .collect(Collectors.toList());
-        newList.forEach(item -> System.out.println(item));
+                .map(String::toUpperCase)
+                .toList();
+        newList.forEach(System.out::println);
     }
 
     static void streamAndFlatMap() {
@@ -120,11 +120,23 @@ public class Main {
                 Arrays.asList("apple", "banana"),
                 Arrays.asList("orange", "grape", "banana"));
 
+//        List<String> newList = listInList.stream()
+//                .flatMap(Collection::stream)
+//                .distinct()
+//                .toList();
+
         List<String> newList = listInList.stream()
-                .flatMap(Collection::stream)
+                .flatMap( list -> {
+                    for (String s: list) {
+                        System.out.println(s);
+                    }
+                    System.out.println("------------------------");
+                    return list.stream();
+                })
                 .distinct()
-                .collect(Collectors.toList());
-        newList.forEach(item -> System.out.println(item));
+                .toList();
+
+        newList.forEach(System.out::println);
     }
 
     static void getEnum() {
